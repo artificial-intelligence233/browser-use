@@ -1,0 +1,43 @@
+张明远
+
+基本信息
+电话：13812345678
+邮箱：zhangmingyuan@example.com
+城市：杭州
+性别：男
+出生日期：2001年3月
+
+教育经历
+浙江大学	本科	计算机科学与技术	2020-09 ~ 2024-06	GPA 3.7/4.0
+
+技能
+编程语言：Python、Java、JavaScript、TypeScript、SQL
+框架：FastAPI、React、PyTorch、LangChain、LlamaIndex
+工具：Git、Docker、Linux、MySQL、Redis、Elasticsearch、Nginx
+专业技能：机器学习、自然语言处理、RAG、LLM、大模型、后端开发
+
+项目经历
+
+智能问答RAG系统	2023.10 ~ 2024.03
+技术栈：Python、LangChain、LlamaIndex、Elasticsearch、FastAPI
+项目描述：设计并实现了基于RAG的企业文档智能问答系统，支持PDF/Word文档上传、向量化检索和上下文感知回答生成。
+职责：负责后端服务开发、向量数据库选型、检索pipeline优化
+成果：检索准确率达92%，回答响应时间<3s
+
+基于大模型的代码审查助手	2023.05 ~ 2023.09
+技术栈：Python、PyTorch、FastAPI、Docker、MySQL
+项目描述：利用LLM对GitHub PR进行自动化代码审查，检测潜在bug和安全漏洞并提供修改建议。
+职责：负责模型调用链路设计、Prompt工程和系统部署
+成果：在公司内部试用，发现bug率提升40%
+
+实习经历
+
+字节跳动	大模型应用开发实习生	2023.07 ~ 2023.12
+职责：参与内部AI助手平台开发，优化RAG检索流程，开发Agent编排模块
+成果：将检索延迟降低50%，获得团队优秀实习生
+
+求职意向
+期望岗位：大模型应用工程师
+期望城市：杭州
+期望薪资：15K-25K
+行业：人工智能
