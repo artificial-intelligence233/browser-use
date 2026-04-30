@@ -22,6 +22,7 @@ BROWSER_USE_ENABLED = os.getenv("JOB_RAG_ENABLE_BROWSER_USE", "0").lower() in {"
 BROWSER_USE_HEADLESS = os.getenv("JOB_RAG_BROWSER_USE_HEADLESS", "1").lower() not in {"0", "false", "no", "off"}
 BROWSER_USE_TIMEOUT_SECONDS = int(os.getenv("JOB_RAG_BROWSER_USE_TIMEOUT_SECONDS", "25"))
 BROWSER_USE_WORK_DIR = Path(os.getenv("JOB_RAG_BROWSER_USE_WORK_DIR", str(PROJECT_ROOT / ".browseruse"))).resolve()
+PLAYWRIGHT_BROWSERS_PATH = Path(os.getenv("PLAYWRIGHT_BROWSERS_PATH", r"D:\agent_part3")).resolve()
 BROWSER_USE_CONFIG_DIR = Path(
     os.getenv("BROWSER_USE_CONFIG_DIR", str(BROWSER_USE_WORK_DIR / "config"))
 ).resolve()

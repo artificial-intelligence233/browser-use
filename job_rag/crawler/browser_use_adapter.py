@@ -20,6 +20,7 @@ from job_rag.config import (
     BROWSER_USE_HOME_DIR,
     BROWSER_USE_PROFILE_DIR,
     BROWSER_USE_TIMEOUT_SECONDS,
+    PLAYWRIGHT_BROWSERS_PATH,
 )
 from job_rag.crawler.page_extractor import html_to_visible_text, truncate_text
 from job_rag.schemas import PageContent
@@ -51,8 +52,10 @@ def configure_browser_use_environment() -> None:
     BROWSER_USE_HOME_DIR.mkdir(parents=True, exist_ok=True)
     BROWSER_USE_PROFILE_DIR.mkdir(parents=True, exist_ok=True)
     BROWSER_USE_DOWNLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    PLAYWRIGHT_BROWSERS_PATH.mkdir(parents=True, exist_ok=True)
     os.environ.setdefault("BROWSER_USE_CONFIG_DIR", str(BROWSER_USE_CONFIG_DIR))
     os.environ.setdefault("BROWSER_USE_HOME", str(BROWSER_USE_HOME_DIR))
+    os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", str(PLAYWRIGHT_BROWSERS_PATH))
     os.environ.setdefault("BROWSER_USE_SETUP_LOGGING", "false")
 
 

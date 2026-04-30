@@ -227,10 +227,10 @@ uv 0.11.8
 Playwright Chromium 组件
 ```
 
-Chromium 本地缓存路径：
+Playwright / Chromium 本地缓存根目录：
 
 ```text
-C:\Users\A\AppData\Local\ms-playwright\chromium-1208
+D:\agent_part3
 ```
 
 说明：
@@ -240,10 +240,16 @@ C:\Users\A\AppData\Local\ms-playwright\chromium-1208
 Chromium 不在 conda 环境 D:\Conda\envs\job_rag_browser_use 内。
 ```
 
+当前 Chromium 子目录：
+
+```text
+D:\agent_part3\chromium-1217
+```
+
 Chromium 目录大小约：
 
 ```text
-393.4 MB
+410.19 MB
 ```
 
 当前已知限制：

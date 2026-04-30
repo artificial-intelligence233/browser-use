@@ -62,6 +62,7 @@ Useful optional settings:
 JOB_RAG_BROWSER_USE_HEADLESS=1
 JOB_RAG_BROWSER_USE_TIMEOUT_SECONDS=25
 JOB_RAG_BROWSER_USE_WORK_DIR=.browseruse
+PLAYWRIGHT_BROWSERS_PATH=D:\agent_part3
 ```
 
 If Browser Use is unavailable or fails to open a page, the crawler falls back
