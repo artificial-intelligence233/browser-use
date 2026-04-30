@@ -8,14 +8,27 @@
   "retrieval_score": 0.82,
   "matched_skills": ["Python", "RAG", "LLM", "Vector DB"],
   "missing_skills": ["Browser Use"],
+  "score_detail": {
+    "semantic_similarity": 0.82,
+    "skill_match": 0.8,
+    "project_relevance": 0.9,
+    "city_match": 1.0,
+    "education_or_experience_match": 0.7,
+    "job_type_or_salary_match": 0.8,
+    "matched_skills": ["Python", "RAG", "LLM", "Vector DB"],
+    "missing_skills": ["Browser Use"],
+    "relevant_projects": ["智能简历优化系统"]
+  },
   "match_reasons": [
-    "Resume skills overlap with the JD on: Python, RAG, LLM, Vector DB."
+    "岗位要求与简历技能存在重合：Python、RAG、LLM、Vector DB。",
+    "简历项目与岗位职责/要求相关：智能简历优化系统。",
+    "岗位城市为北京，符合候选人的目标城市。"
   ],
   "mismatch_reasons": [
-    "The JD mentions skills not found in the resume: Browser Use."
+    "岗位提到这些技能，但当前简历资料中未体现：Browser Use。"
   ],
   "resume_edit_focus": [
-    "If truthful, add concrete project or experience evidence for: Browser Use."
+    "如果真实具备相关经历，可在简历中补充 Browser Use 的项目或实践证据。",
+    "在技能和项目描述中优先突出已匹配能力：Python、RAG、LLM、Vector DB。"
   ]
 }
-

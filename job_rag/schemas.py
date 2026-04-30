@@ -122,6 +122,7 @@ class JobMatchResult:
     match_reasons: list[str] = field(default_factory=list)
     mismatch_reasons: list[str] = field(default_factory=list)
     resume_edit_focus: list[str] = field(default_factory=list)
+    score_detail: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -132,4 +133,5 @@ class JobMatchResult:
         values = {key: data.get(key) for key in allowed}
         for list_key in ("matched_skills", "missing_skills", "match_reasons", "mismatch_reasons", "resume_edit_focus"):
             values[list_key] = values.get(list_key) or []
+        values["score_detail"] = values.get("score_detail") or {}
         return cls(**values)
