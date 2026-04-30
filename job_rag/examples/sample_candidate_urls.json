@@ -1,0 +1,30 @@
+{
+  "candidate_urls": [
+    {
+      "url": "local_jobs/ai_agent_intern.html",
+      "source": "local_demo",
+      "query": "AI Agent Intern Beijing"
+    },
+    {
+      "url": "local_jobs/rag_backend_engineer.html",
+      "source": "local_demo",
+      "query": "RAG Backend Engineer Remote"
+    },
+    {
+      "url": "local_jobs/data_platform_intern.html",
+      "source": "local_demo",
+      "query": "Data Platform Intern Shanghai"
+    },
+    {
+      "url": "local_jobs/frontend_engineer.html",
+      "source": "local_demo",
+      "query": "Frontend Engineer Hangzhou"
+    },
+    {
+      "url": "local_jobs/ml_research_intern.html",
+      "source": "local_demo",
+      "query": "Machine Learning Intern Beijing"
+    }
+  ]
+}
+

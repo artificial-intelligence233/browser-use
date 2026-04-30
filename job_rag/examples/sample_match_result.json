@@ -1,0 +1,21 @@
+{
+  "job_id": "job_demo_ai_agent",
+  "rank": 1,
+  "title": "AI Agent Intern",
+  "company": "Example AI Lab",
+  "url": "local_jobs/ai_agent_intern.html",
+  "match_score": 87,
+  "retrieval_score": 0.82,
+  "matched_skills": ["Python", "RAG", "LLM", "Vector DB"],
+  "missing_skills": ["Browser Use"],
+  "match_reasons": [
+    "Resume skills overlap with the JD on: Python, RAG, LLM, Vector DB."
+  ],
+  "mismatch_reasons": [
+    "The JD mentions skills not found in the resume: Browser Use."
+  ],
+  "resume_edit_focus": [
+    "If truthful, add concrete project or experience evidence for: Browser Use."
+  ]
+}
+

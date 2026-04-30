@@ -1,0 +1,44 @@
+{
+  "name": "Demo Candidate",
+  "education": [
+    {
+      "school": "Example University",
+      "degree": "Bachelor",
+      "major": "Computer Science"
+    }
+  ],
+  "skills": [
+    "Python",
+    "RAG",
+    "LLM",
+    "FastAPI",
+    "Vector DB",
+    "PyTorch",
+    "SQL"
+  ],
+  "projects": [
+    {
+      "name": "Resume Job Matching Assistant",
+      "description": "Built a RAG workflow that indexes job descriptions and recommends relevant roles from structured resume data.",
+      "tech_stack": ["Python", "RAG", "Vector DB", "FastAPI"]
+    },
+    {
+      "name": "Browser Task Automation Demo",
+      "description": "Used browser automation to collect public web page text for downstream extraction.",
+      "tech_stack": ["Python", "Playwright"]
+    }
+  ],
+  "internships": [],
+  "target_roles": [
+    "AI Agent Engineer",
+    "Machine Learning Intern",
+    "Backend Engineer"
+  ],
+  "target_cities": [
+    "Beijing",
+    "Shanghai",
+    "Remote"
+  ],
+  "salary_expectation": "Negotiable"
+}
+

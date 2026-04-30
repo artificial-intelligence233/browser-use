@@ -29,6 +29,7 @@ dist/
 *.jsonl
 *.log
 *.bak
+!job_rag/examples/*.json
 
 # Secrets and sensitive files
 secrets.env
@@ -84,3 +85,4 @@ product_extraction.py
 plot.py
 
 .claude/
+.browseruse/

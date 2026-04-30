@@ -1,0 +1,31 @@
+{
+  "job_id": "job_demo_ai_agent",
+  "url": "local_jobs/ai_agent_intern.html",
+  "source": "local_demo",
+  "title": "AI Agent Intern",
+  "company": "Example AI Lab",
+  "location": "Beijing",
+  "city": "Beijing",
+  "salary": "200-300/day",
+  "salary_min": 200,
+  "salary_max": 300,
+  "salary_unit": "day",
+  "job_type": "Internship",
+  "education_required": "Bachelor or above",
+  "experience_required": "No strict requirement",
+  "responsibilities": [
+    "Build browser automation workflows for public web pages.",
+    "Integrate job extraction with RAG retrieval."
+  ],
+  "requirements": [
+    "Familiar with Python, LLM, RAG, and vector databases.",
+    "Browser automation experience is preferred."
+  ],
+  "skills": ["Python", "LLM", "RAG", "Vector DB", "Browser Use"],
+  "raw_text": "Demo raw text",
+  "extraction_confidence": 0.86,
+  "crawled_at": "2026-04-29T12:00:00+00:00",
+  "is_valid": true,
+  "validation_errors": []
+}
+
