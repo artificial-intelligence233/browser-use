@@ -22,12 +22,12 @@ class BasicInfo(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    name: str = ""
-    phone: str = ""
-    email: str = ""
-    city: str = ""
-    age: str = ""
-    gender: str = ""
+    name: str = Field(default="", description="候选人姓名")
+    phone: str = Field(default="", description="候选人联系电话")
+    email: str = Field(default="", description="候选人邮箱地址")
+    city: str = Field(default="", description="候选人当前所在城市")
+    age: str = Field(default="", description="候选人年龄")
+    gender: str = Field(default="", description="候选人性别")
 
 
 class Education(BaseModel):
@@ -35,12 +35,12 @@ class Education(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    school: str = ""
-    degree: str = ""
-    major: str = ""
-    start_date: str = ""
-    end_date: str = ""
-    gpa: str = ""
+    school: str = Field(default="", description="学校或教育机构名称")
+    degree: str = Field(default="", description="学历或学位，例如本科、硕士、博士")
+    major: str = Field(default="", description="专业名称")
+    start_date: str = Field(default="", description="教育经历开始时间")
+    end_date: str = Field(default="", description="教育经历结束时间")
+    gpa: str = Field(default="", description="GPA 或成绩信息")
 
 
 class Skills(BaseModel):
@@ -52,10 +52,10 @@ class Skills(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    programming_languages: list[str] = Field(default_factory=list)
-    frameworks: list[str] = Field(default_factory=list)
-    tools: list[str] = Field(default_factory=list)
-    professional_skills: list[str] = Field(default_factory=list)
+    programming_languages: list[str] = Field(default_factory=list, description="编程语言技能列表")
+    frameworks: list[str] = Field(default_factory=list, description="框架或库技能列表")
+    tools: list[str] = Field(default_factory=list, description="开发工具、中间件或平台技能列表")
+    professional_skills: list[str] = Field(default_factory=list, description="专业技能或领域能力列表")
 
 
 class Project(BaseModel):
@@ -63,11 +63,11 @@ class Project(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    name: str = ""
-    description: str = ""
-    technologies: list[str] = Field(default_factory=list)
-    responsibilities: list[str] = Field(default_factory=list)
-    achievements: list[str] = Field(default_factory=list)
+    name: str = Field(default="", description="项目名称")
+    description: str = Field(default="", description="项目简介或背景说明")
+    technologies: list[str] = Field(default_factory=list, description="项目使用的技术栈")
+    responsibilities: list[str] = Field(default_factory=list, description="候选人在项目中的职责列表")
+    achievements: list[str] = Field(default_factory=list, description="项目成果、指标或亮点列表")
 
 
 class Internship(BaseModel):
@@ -75,12 +75,12 @@ class Internship(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    company: str = ""
-    position: str = ""
-    start_date: str = ""
-    end_date: str = ""
-    responsibilities: list[str] = Field(default_factory=list)
-    achievements: list[str] = Field(default_factory=list)
+    company: str = Field(default="", description="实习或工作单位名称")
+    position: str = Field(default="", description="实习或工作岗位名称")
+    start_date: str = Field(default="", description="实习或工作开始时间")
+    end_date: str = Field(default="", description="实习或工作结束时间")
+    responsibilities: list[str] = Field(default_factory=list, description="实习或工作职责列表")
+    achievements: list[str] = Field(default_factory=list, description="实习或工作成果列表")
 
 
 class JobIntention(BaseModel):
@@ -92,10 +92,10 @@ class JobIntention(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    target_position: str = ""
-    target_city: str = ""
-    expected_salary: str = ""
-    industry: str = ""
+    target_position: str = Field(default="", description="候选人的目标岗位")
+    target_city: str = Field(default="", description="候选人的目标工作城市")
+    expected_salary: str = Field(default="", description="候选人的期望薪资")
+    industry: str = Field(default="", description="候选人的目标行业")
 
 
 class ResumeProfile(BaseModel):
@@ -108,14 +108,14 @@ class ResumeProfile(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    basic_info: BasicInfo = Field(default_factory=BasicInfo)
-    education: list[Education] = Field(default_factory=list)
-    skills: Skills = Field(default_factory=Skills)
-    projects: list[Project] = Field(default_factory=list)
-    internships: list[Internship] = Field(default_factory=list)
-    job_intention: JobIntention = Field(default_factory=JobIntention)
-    keywords: list[str] = Field(default_factory=list)
-    inferred_fields: list[str] = Field(default_factory=list)
+    basic_info: BasicInfo = Field(default_factory=BasicInfo, description="候选人基本信息")
+    education: list[Education] = Field(default_factory=list, description="候选人教育经历列表")
+    skills: Skills = Field(default_factory=Skills, description="候选人技能信息")
+    projects: list[Project] = Field(default_factory=list, description="候选人项目经历列表")
+    internships: list[Internship] = Field(default_factory=list, description="候选人实习或工作经历列表")
+    job_intention: JobIntention = Field(default_factory=JobIntention, description="候选人求职意向")
+    keywords: list[str] = Field(default_factory=list, description="用于岗位搜索和推荐的关键词列表")
+    inferred_fields: list[str] = Field(default_factory=list, description="由解析器推断出的字段及推断依据列表")
 
 
 class JobLink(BaseModel):
@@ -127,11 +127,11 @@ class JobLink(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    title: str = ""
-    url: str = ""
-    snippet: str = ""
-    source_query: str = ""
-    source: str = ""
+    title: str = Field(default="", description="搜索结果标题")
+    url: str = Field(default="", description="岗位或招聘页面 URL")
+    snippet: str = Field(default="", description="搜索结果摘要")
+    source_query: str = Field(default="", description="产生该搜索结果的原始搜索 query")
+    source: str = Field(default="", description="搜索结果来源域名")
 
 
 class FinalMetadata(BaseModel):
@@ -145,14 +145,14 @@ class FinalMetadata(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    task_id: str = ""
-    created_at: str = ""
-    input_file: str = ""
-    output_file: str = ""
-    parser_type: str = "rule"
-    total_queries: int = 0
-    total_links: int = 0
-    warnings: list[str] = Field(default_factory=list)
+    task_id: str = Field(default="", description="本次流水线任务的唯一标识")
+    created_at: str = Field(default="", description="本次流水线任务创建时间")
+    input_file: str = Field(default="", description="输入简历文件的绝对路径")
+    output_file: str = Field(default="", description="输出 JSON 文件的绝对路径")
+    parser_type: str = Field(default="rule", description="实际使用的解析方式，可选值为 llm 或 rule")
+    total_queries: int = Field(default=0, description="本次生成的搜索 query 总数")
+    total_links: int = Field(default=0, description="本次搜索得到的岗位链接总数")
+    warnings: list[str] = Field(default_factory=list, description="流水线执行过程中的警告信息列表")
 
 
 class FinalResult(BaseModel):
@@ -166,10 +166,10 @@ class FinalResult(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    resume_profile: ResumeProfile = Field(default_factory=ResumeProfile)
-    search_queries: list[str] = Field(default_factory=list)
-    job_links: list[JobLink] = Field(default_factory=list)
-    metadata: FinalMetadata = Field(default_factory=FinalMetadata)
+    resume_profile: ResumeProfile = Field(default_factory=ResumeProfile, description="解析后的结构化简历信息")
+    search_queries: list[str] = Field(default_factory=list, description="根据简历生成的岗位搜索 query 列表")
+    job_links: list[JobLink] = Field(default_factory=list, description="搜索得到的候选岗位链接列表")
+    metadata: FinalMetadata = Field(default_factory=FinalMetadata, description="本次流水线运行的元数据信息")
 
 
 def model_to_dict(model: BaseModel) -> dict[str, Any]:
