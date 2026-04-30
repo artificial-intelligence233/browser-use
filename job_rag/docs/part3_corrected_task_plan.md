@@ -240,16 +240,19 @@ D:\agent_part3
 Chromium 不在 conda 环境 D:\Conda\envs\job_rag_browser_use 内。
 ```
 
-当前 Chromium 子目录：
+当前 Playwright 组件子目录：
 
 ```text
 D:\agent_part3\chromium-1217
+D:\agent_part3\chromium_headless_shell-1217
+D:\agent_part3\ffmpeg-1011
+D:\agent_part3\winldd-1007
 ```
 
 Chromium 目录大小约：
 
 ```text
-410.19 MB
+675.00 MB
 ```
 
 当前已知限制：
