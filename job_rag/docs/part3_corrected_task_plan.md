@@ -227,10 +227,17 @@ uv 0.11.8
 Playwright Chromium 组件
 ```
 
-Chromium 浏览器缓存位置：
+Chromium 本地缓存路径：
 
 ```text
 C:\Users\A\AppData\Local\ms-playwright\chromium-1208
+```
+
+说明：
+
+```text
+这里是 Playwright/Browser Use 自动下载后的本地缓存路径，不是网络下载 URL。
+Chromium 不在 conda 环境 D:\Conda\envs\job_rag_browser_use 内。
 ```
 
 Chromium 目录大小约：
