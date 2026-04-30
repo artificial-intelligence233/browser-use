@@ -14,6 +14,10 @@ DEFAULT_TOP_K = 5
 MAX_PAGE_TEXT_CHARS = 12000
 VECTOR_INDEX_FILENAME = "vector_index.json"
 
+EMBEDDING_PROVIDER = os.getenv("JOB_RAG_EMBEDDING_PROVIDER", "local").lower()
+VECTOR_BACKEND = os.getenv("JOB_RAG_VECTOR_BACKEND", "local").lower()
+CHROMA_INDEX_DIR = Path(os.getenv("JOB_RAG_CHROMA_DIR", str(OUTPUTS_DIR / "chroma_index"))).resolve()
+
 BROWSER_USE_ENABLED = os.getenv("JOB_RAG_ENABLE_BROWSER_USE", "0").lower() in {"1", "true", "yes", "on"}
 BROWSER_USE_HEADLESS = os.getenv("JOB_RAG_BROWSER_USE_HEADLESS", "1").lower() not in {"0", "false", "no", "off"}
 BROWSER_USE_TIMEOUT_SECONDS = int(os.getenv("JOB_RAG_BROWSER_USE_TIMEOUT_SECONDS", "25"))

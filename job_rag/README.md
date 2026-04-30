@@ -66,3 +66,23 @@ JOB_RAG_BROWSER_USE_WORK_DIR=.browseruse
 
 If Browser Use is unavailable or fails to open a page, the crawler falls back
 to the existing local/HTTP reader and preserves structured error information.
+
+## Retrieval Backend Interface
+
+The retrieval layer exposes stable interfaces for future embedding and vector
+database upgrades:
+
+```text
+EmbeddingProvider -> embed_documents / embed_query
+VectorStoreBackend -> index_jobs / search_jobs
+```
+
+The current default is still dependency-free:
+
+```text
+JOB_RAG_EMBEDDING_PROVIDER=local
+JOB_RAG_VECTOR_BACKEND=local
+```
+
+Future providers such as OpenAI embeddings or Chroma can be added behind these
+interfaces without changing the demo pipeline or the matching module.
