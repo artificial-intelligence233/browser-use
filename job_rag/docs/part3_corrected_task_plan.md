@@ -159,6 +159,26 @@ JOB_RAG_VECTOR_BACKEND=chroma
 JOB_RAG_EMBEDDING_PROVIDER=openai
 ```
 
+敏感配置使用规则：
+
+```text
+后续如用户提供 embedding / LLM 服务的 base-url、模型名称、api-key，
+这些信息仅允许在本地运行时使用，严禁上传到 GitHub。
+
+严禁将真实 base-url、真实模型名称、真实 api-key 写入：
+- Git 提交
+- Markdown 文档
+- README
+- Python / shell / PowerShell 脚本
+- 示例 JSON
+- 测试文件
+- commit message
+- PR 描述
+
+代码中只允许读取通用环境变量名，不允许硬编码真实值。
+真实值只能由用户在本地终端、系统环境变量或未纳入 Git 的本地配置文件中设置。
+```
+
 ## 4. 修正后任务节点
 
 | 节点 | 任务 | 状态 | 完成标志 |
@@ -167,15 +187,15 @@ JOB_RAG_EMBEDDING_PROVIDER=openai
 | 2 | 创建 `job_rag/` 基础模块结构 | 已完成 | 包结构、README、配置和 schema 已存在 |
 | 3 | 添加 demo 输入和本地岗位 HTML | 已完成 | `examples/` 中有 sample JSON 和本地岗位 HTML |
 | 4 | 实现页面读取 fallback | 已完成 | 本地 HTML / HTTP 页面可读取，单个 URL 失败不影响整体流程 |
-| 5 | 接入 Browser Use 可选适配器 | 部分完成 | 代码层 adapter 已完成；真实 Chromium 启动仍需本地终端继续验证 |
+| 5 | 接入 Browser Use 可选适配器 | 部分完成 | 代码层 adapter 已完成；Playwright headless Chromium 已可从 `D:\agent_part3` 启动；真实岗位页抽取仍需公开 URL 验证 |
 | 6 | 实现岗位信息抽取 | 已完成 | 能抽取标题、公司、地点、薪资、职责、要求、技能等字段 |
 | 7 | 实现校验、归一化和去重 | 已完成 | 支持岗位有效性校验、城市/薪资/技能归一化、重复岗位去重 |
 | 8 | 实现本地检索 fallback | 已完成 | `LocalJsonVectorStore` 可索引和检索岗位 |
 | 9 | 完善匹配评分公式 | 已完成 | 已输出 `semantic_similarity`、`skill_match`、`project_relevance`、`city_match` 等分项 |
 | 10 | 中文化匹配解释 | 已完成 | 匹配理由、不匹配原因、简历修改重点已改为中文模板 |
 | 11 | 抽象 embedding 和 vector store 接口 | 已完成 | 已新增 `EmbeddingProvider`、`VectorStoreBackend` 接口 |
-| 12 | 实现 Chroma 向量库后端 | 待完成 | 需要新增 `ChromaVectorStoreBackend` 并持久化到 `chroma_index/` |
-| 13 | 实现 OpenAI embedding provider | 暂缓 | 暂时不使用 OpenAI embedding；后续读取 `OPENAI_API_KEY` |
+| 12 | 实现 Chroma 向量库后端 | 已完成 | 已新增 `ChromaVectorStoreBackend`，可持久化到 `chroma_index/` 并完成检索 |
+| 13 | 实现 API embedding provider 接口 | 已完成 | 已新增 OpenAI-compatible embedding provider，仅读取本地环境变量；真实远程调用待用户提供有效 embedding 模型后验证 |
 | 14 | 与第 6 部分后端 API 对齐 | 待完成 | 需确认 `/crawl_jobs`、`/recommend_jobs` 的请求/响应字段 |
 | 15 | Pull Request / 合并 | 暂缓 | 当前只 push 个人分支，不创建 PR，不合并 main |
 
@@ -211,6 +231,7 @@ part3-browser-use-job-rag
 967c34e5 feat: add part3 job rag module
 8549e854 feat: add detailed job match scoring
 2c19d535 feat: add pluggable retrieval interfaces
+6bc6b35e docs: record playwright headless cache path
 ```
 
 Python / conda 环境：
@@ -224,6 +245,8 @@ D:\Conda\envs\job_rag_browser_use
 ```text
 browser-use 0.12.6
 uv 0.11.8
+chromadb 1.5.8
+pytest 9.0.3
 Playwright Chromium 组件
 ```
 
@@ -258,8 +281,9 @@ Chromium 目录大小约：
 当前已知限制：
 
 ```text
-browser-use 实际启动 Chromium 时曾遇到 [WinError 5] 拒绝访问。
-因此当前 demo 仍默认使用本地 HTML / HTTP fallback。
+Playwright headless Chromium 已验证可从 D:\agent_part3 启动。
+当前 demo 仍默认使用本地 HTML / HTTP fallback。
+真实 browser-use 公开岗位页抽取仍需要公开 URL 做集成验证。
 ```
 
 ## 6. 当前验证结果
@@ -285,7 +309,7 @@ python -m pytest -o addopts= job_rag/tests
 结果：
 
 ```text
-14 passed
+16 passed
 ```
 
 说明：
@@ -300,21 +324,22 @@ python -m pytest -o addopts= job_rag/tests
 优先级建议：
 
 ```text
-1. 实现 ChromaVectorStoreBackend
-2. 用 local embedding provider + Chroma 后端验证持久化向量库
-3. 后续再接 OpenAIEmbeddingProvider
-4. 在普通本地终端继续验证真实 browser-use 页面读取
-5. 与第 6 部分后端同学对齐 API 输入输出
+1. 使用公开岗位 URL 验证真实 browser-use 页面读取
+2. 若需要远程 embedding，提供有效 embedding 模型并仅在本地环境变量中设置
+3. 与第 6 部分后端同学对齐 API 输入输出
+4. 根据真实岗位页面完善抽取规则和错误处理
+5. 准备 PR 前自查敏感信息和输出文件
 ```
 
-Chroma 后端目标：
+Chroma 后端验证命令：
 
 ```text
 JOB_RAG_VECTOR_BACKEND=chroma
+JOB_RAG_CHROMA_DIR=job_rag/examples/outputs/chroma_index
 python job_rag/examples/run_demo.py
 ```
 
-预期新增持久化目录：
+已验证新增持久化目录：
 
 ```text
 job_rag/examples/outputs/chroma_index/

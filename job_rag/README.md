@@ -85,5 +85,20 @@ JOB_RAG_EMBEDDING_PROVIDER=local
 JOB_RAG_VECTOR_BACKEND=local
 ```
 
-Future providers such as OpenAI embeddings or Chroma can be added behind these
-interfaces without changing the demo pipeline or the matching module.
+To use the local persistent Chroma backend:
+
+```text
+JOB_RAG_VECTOR_BACKEND=chroma
+JOB_RAG_CHROMA_DIR=job_rag/examples/outputs/chroma_index
+JOB_RAG_CHROMA_COLLECTION=job_postings
+```
+
+To use an OpenAI-compatible embedding service, configure only local environment
+variables. Do not commit real service URLs, model names, or API keys:
+
+```text
+JOB_RAG_EMBEDDING_PROVIDER=openai_compatible
+JOB_RAG_EMBEDDING_BASE_URL=<set locally>
+JOB_RAG_EMBEDDING_MODEL=<set locally>
+JOB_RAG_EMBEDDING_API_KEY=<set locally>
+```

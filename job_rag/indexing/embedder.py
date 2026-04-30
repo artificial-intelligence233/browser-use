@@ -7,7 +7,14 @@ import re
 from collections import Counter
 from typing import Any
 
-from job_rag.config import EMBEDDING_PROVIDER
+from job_rag.config import (
+    EMBEDDING_API_ALLOW_FALLBACK,
+    EMBEDDING_API_BASE_URL,
+    EMBEDDING_API_KEY,
+    EMBEDDING_API_MODEL,
+    EMBEDDING_API_TIMEOUT_SECONDS,
+    EMBEDDING_PROVIDER,
+)
 from job_rag.indexing.interfaces import Embedding
 
 
@@ -70,17 +77,70 @@ class LocalTokenEmbeddingProvider:
         return embed_text(text)
 
 
-def get_embedding_provider(provider: str | None = None, options: dict[str, Any] | None = None) -> LocalTokenEmbeddingProvider:
+class OpenAICompatibleEmbeddingProvider:
+    """OpenAI-compatible embedding provider configured only through env vars."""
+
+    name = "openai_compatible"
+
+    def __init__(
+        self,
+        api_key: str | None = None,
+        base_url: str | None = None,
+        model: str | None = None,
+        timeout_seconds: int = EMBEDDING_API_TIMEOUT_SECONDS,
+        allow_fallback: bool = EMBEDDING_API_ALLOW_FALLBACK,
+    ) -> None:
+        self.api_key = EMBEDDING_API_KEY if api_key is None else api_key
+        self.base_url = EMBEDDING_API_BASE_URL if base_url is None else base_url
+        self.model = EMBEDDING_API_MODEL if model is None else model
+        self.timeout_seconds = timeout_seconds
+        self.allow_fallback = allow_fallback
+        self.fallback_provider = LocalTokenEmbeddingProvider()
+
+    def embed_documents(self, texts: list[str]) -> list[Embedding]:
+        return self._embed(texts)
+
+    def embed_query(self, text: str) -> Embedding:
+        return self._embed([text])[0]
+
+    def _embed(self, texts: list[str]) -> list[Embedding]:
+        if not texts:
+            return []
+        if not self.api_key or not self.model:
+            return self._fallback(texts)
+        try:
+            from openai import OpenAI
+
+            client_options: dict[str, Any] = {"api_key": self.api_key, "timeout": self.timeout_seconds}
+            if self.base_url:
+                client_options["base_url"] = self.base_url
+            client = OpenAI(**client_options)
+            response = client.embeddings.create(model=self.model, input=texts)
+            return [list(map(float, item.embedding)) for item in response.data]
+        except Exception:
+            if self.allow_fallback:
+                return self._fallback(texts)
+            raise
+
+    def _fallback(self, texts: list[str]) -> list[Embedding]:
+        return self.fallback_provider.embed_documents(texts)
+
+
+def get_embedding_provider(
+    provider: str | None = None,
+    options: dict[str, Any] | None = None,
+) -> LocalTokenEmbeddingProvider | OpenAICompatibleEmbeddingProvider:
     """Return the configured embedding provider.
 
-    The formal provider interface is in place now; external providers such as
-    OpenAI can be added later without changing callers. Until then, unsupported
-    provider names intentionally fall back to the local deterministic provider.
+    The API provider reads only generic environment variables. Real keys,
+    model names, and service URLs must stay in the local runtime environment.
     """
     provider_name = (provider or EMBEDDING_PROVIDER or "local").lower()
-    _ = options
+    options = options or {}
     if provider_name in {"local", "fallback", "token", "token_overlap"}:
         return LocalTokenEmbeddingProvider()
+    if provider_name in {"openai", "openai_compatible", "api", "remote"}:
+        return OpenAICompatibleEmbeddingProvider(**options)
     return LocalTokenEmbeddingProvider()
 
 

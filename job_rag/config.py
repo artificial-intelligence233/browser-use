@@ -17,6 +17,17 @@ VECTOR_INDEX_FILENAME = "vector_index.json"
 EMBEDDING_PROVIDER = os.getenv("JOB_RAG_EMBEDDING_PROVIDER", "local").lower()
 VECTOR_BACKEND = os.getenv("JOB_RAG_VECTOR_BACKEND", "local").lower()
 CHROMA_INDEX_DIR = Path(os.getenv("JOB_RAG_CHROMA_DIR", str(OUTPUTS_DIR / "chroma_index"))).resolve()
+CHROMA_COLLECTION_NAME = os.getenv("JOB_RAG_CHROMA_COLLECTION", "job_postings")
+EMBEDDING_API_BASE_URL = os.getenv("JOB_RAG_EMBEDDING_BASE_URL")
+EMBEDDING_API_MODEL = os.getenv("JOB_RAG_EMBEDDING_MODEL")
+EMBEDDING_API_KEY = os.getenv("JOB_RAG_EMBEDDING_API_KEY")
+EMBEDDING_API_TIMEOUT_SECONDS = int(os.getenv("JOB_RAG_EMBEDDING_TIMEOUT_SECONDS", "30"))
+EMBEDDING_API_ALLOW_FALLBACK = os.getenv("JOB_RAG_EMBEDDING_ALLOW_FALLBACK", "1").lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
 
 BROWSER_USE_ENABLED = os.getenv("JOB_RAG_ENABLE_BROWSER_USE", "0").lower() in {"1", "true", "yes", "on"}
 BROWSER_USE_HEADLESS = os.getenv("JOB_RAG_BROWSER_USE_HEADLESS", "1").lower() not in {"0", "false", "no", "off"}

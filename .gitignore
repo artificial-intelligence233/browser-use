@@ -86,3 +86,7 @@ plot.py
 
 .claude/
 .browseruse/
+.job_rag_test_tmp/
+chroma_index/
+job_rag/chroma_index/
+job_rag/examples/outputs/chroma_index/
