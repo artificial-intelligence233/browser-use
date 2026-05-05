@@ -32,6 +32,18 @@ class LLMExtractionUnavailable(RuntimeError):
     """Raised when LLM extraction is disabled, unconfigured, or fails."""
 
 
+def normalize_openai_compatible_base_url(base_url: str | None) -> str | None:
+    """Normalize provider root URLs to an OpenAI-compatible v1 base URL."""
+    if not base_url:
+        return None
+    clean = base_url.strip().rstrip("/")
+    if not clean:
+        return None
+    if clean.endswith("/v1"):
+        return clean
+    return clean + "/v1"
+
+
 def is_llm_extraction_configured() -> bool:
     """Return True when local runtime env vars are sufficient for LLM extraction."""
     return bool(LLM_EXTRACTION_ENABLED and LLM_API_KEY and LLM_API_MODEL)
@@ -82,6 +94,27 @@ def parse_llm_json(content: str) -> dict[str, Any]:
     return normalize_llm_job_fields(parsed)
 
 
+def _chat_completion_content(client: Any, messages: list[dict[str, str]]) -> str:
+    request: dict[str, Any] = {
+        "model": LLM_API_MODEL,
+        "messages": messages,
+        "temperature": 0,
+    }
+    try:
+        response = client.chat.completions.create(
+            **request,
+            response_format={"type": "json_object"},
+        )
+    except Exception:
+        response = client.chat.completions.create(**request)
+
+    if isinstance(response, str):
+        return response
+    if isinstance(response, dict):
+        return str(response.get("choices", [{}])[0].get("message", {}).get("content") or "")
+    return response.choices[0].message.content or ""
+
+
 def extract_job_fields_with_llm(page_text: str) -> dict[str, Any]:
     """Extract job fields through an OpenAI-compatible chat model."""
     if not is_llm_extraction_configured():
@@ -93,21 +126,19 @@ def extract_job_fields_with_llm(page_text: str) -> dict[str, Any]:
             "api_key": LLM_API_KEY,
             "timeout": LLM_API_TIMEOUT_SECONDS,
         }
-        if LLM_API_BASE_URL:
-            client_options["base_url"] = LLM_API_BASE_URL
+        base_url = normalize_openai_compatible_base_url(LLM_API_BASE_URL)
+        if base_url:
+            client_options["base_url"] = base_url
         client = OpenAI(**client_options)
-        response = client.chat.completions.create(
-            model=LLM_API_MODEL,
-            messages=[
+        content = _chat_completion_content(
+            client,
+            [
                 {"role": "system", "content": JOB_EXTRACTION_SYSTEM_PROMPT},
                 {"role": "user", "content": JOB_EXTRACTION_PROMPT.format(page_text=page_text)},
             ],
-            temperature=0,
         )
-        content = response.choices[0].message.content or ""
         return parse_llm_json(content)
     except LLMExtractionUnavailable:
         raise
     except Exception as exc:
         raise LLMExtractionUnavailable(f"LLM extraction failed: {exc}") from exc
-

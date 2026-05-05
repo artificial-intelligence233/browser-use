@@ -3,7 +3,7 @@ import unittest
 
 from job_rag.crawler.browser_use_runner import crawl_page
 from job_rag.extraction.job_extractor import extract_job_posting
-from job_rag.extraction.llm_extractor import normalize_llm_job_fields, parse_llm_json
+from job_rag.extraction.llm_extractor import normalize_llm_job_fields, normalize_openai_compatible_base_url, parse_llm_json
 from job_rag.schemas import PageContent
 
 
@@ -80,6 +80,10 @@ class ExtractorTest(unittest.TestCase):
         self.assertEqual(parsed["title"], "Data Scientist")
         self.assertIsNone(parsed["company"])
         self.assertEqual(parsed["skills"], ["Python", "SQL"])
+
+    def test_normalize_openai_compatible_base_url(self) -> None:
+        self.assertEqual(normalize_openai_compatible_base_url("https://example.com"), "https://example.com/v1")
+        self.assertEqual(normalize_openai_compatible_base_url("https://example.com/v1"), "https://example.com/v1")
 
 
 if __name__ == "__main__":

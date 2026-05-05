@@ -6,6 +6,7 @@ Extract only information that is explicitly present in the provided page text.
 Do not infer, guess, or fabricate company names, salary, location, skills, or requirements.
 If a field is missing or uncertain, use null or an empty list.
 Return strict JSON only, with no markdown and no explanation.
+Do not use unescaped straight double quotes inside string values; use Chinese quotation marks or escape them.
 """
 
 
@@ -18,6 +19,9 @@ Rules:
 - Keep responsibilities and requirements grounded in the original text.
 - If a forum post has no explicit company name, use the explicit team/company description only if present; otherwise null.
 - Do not invent resume facts, job facts, salary, or credentials.
+- Return parseable JSON. Do not wrap it in markdown fences.
+- Do not use unescaped straight double quotes inside string values.
+- If the source text contains quoted phrases, rewrite the quotes as Chinese quotation marks like “...”.
 
 Required fields:
 {{
