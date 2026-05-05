@@ -506,6 +506,46 @@ $env:PLAYWRIGHT_BROWSERS_PATH="D:\agent_part3"
 - 本地相对路径和 `file://` 页面会直接走 local HTML reader。
 - 如果 browser-use 失败，当前代码会 fallback 到 HTTP reader，并在 `PageContent.error` 中记录 browser-use 错误。
 
+### 7.5 LLM 岗位抽取配置
+
+默认情况下，岗位抽取使用规则 extractor，保证无 API key 时 demo 也能运行。
+
+对于 V2EX、论坛帖、文章页、Notion 招聘页等非标准招聘文本，可以启用聊天模型抽取 fallback：
+
+```powershell
+$env:JOB_RAG_ENABLE_LLM_EXTRACTION="1"
+$env:JOB_RAG_LLM_BASE_URL="<set locally>"
+$env:JOB_RAG_LLM_MODEL="<set locally>"
+$env:JOB_RAG_LLM_API_KEY="<set locally>"
+$env:JOB_RAG_LLM_TIMEOUT_SECONDS="45"
+```
+
+调用逻辑：
+
+```text
+先执行规则抽取
+-> 如果岗位有效且置信度足够，直接使用规则抽取结果
+-> 如果规则抽取无效或置信度低，才调用 LLM 抽取
+-> LLM 输出 JSON
+-> 统一进入 validators.py / normalizer.py
+```
+
+这样可以兼顾：
+
+| 场景 | 处理方式 |
+|---|---|
+| 标准 JD 页面 | 优先使用规则抽取，稳定、低成本 |
+| 非标准招聘帖 | 使用 LLM fallback 理解自然语言 |
+| 无 API key 的课堂 demo | 自动保持规则抽取，不阻塞流程 |
+
+注意：
+
+```text
+LLM 只负责从网页正文抽取岗位字段。
+它不能编造公司、薪资、职责、要求或技能。
+prompt 已要求缺失字段填 null / []，后续仍会做校验。
+```
+
 ---
 
 ## 8. 与各模块的对接说明
@@ -770,4 +810,3 @@ POST /run_job_rag
 | `/run_job_rag` | 一次性完成 crawl -> index -> recommend |
 
 当前代码已经具备这些能力，只是 HTTP endpoint 还没有完全拆分出来。
-

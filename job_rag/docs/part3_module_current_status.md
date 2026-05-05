@@ -187,6 +187,7 @@ flowchart TD
 | Browser Use 可选适配器 | 已完成代码接入 |
 | Playwright / Chromium 本地环境 | 已完成 |
 | 岗位规则抽取 | 已完成 |
+| LLM 岗位抽取 fallback | 已完成接口接入，默认关闭 |
 | 岗位校验 | 已完成 |
 | 城市、薪资、技能归一化 | 已完成 |
 | 岗位去重 | 已完成 |
@@ -225,6 +226,13 @@ index_jobs / search_jobs
 |---|---|---|
 | Local token embedding | `local` | 默认，离线可运行 |
 | OpenAI-compatible API | `openai_compatible` | 只读取本地环境变量，不硬编码真实配置 |
+
+当前还支持可选 LLM 抽取 fallback：
+
+| 能力 | 配置值 | 说明 |
+|---|---|---|
+| 规则抽取 | 默认 | 标准 JD 页面优先使用，离线可运行 |
+| 聊天模型抽取 | `JOB_RAG_ENABLE_LLM_EXTRACTION=1` | 规则抽取低置信度时调用，用于论坛帖、自然语言招聘帖等非标准页面 |
 
 ---
 
@@ -270,6 +278,19 @@ D:\Conda\envs\job_rag_browser_use\python.exe job_rag\examples\run_demo.py
 ```
 
 当前已经在本地验证过一组 OpenAI-compatible embedding API 可以返回 1024 维向量，并能跑通 Chroma demo。真实服务地址、模型名和 key 不记录在本文档中。
+
+### LLM 抽取 fallback
+
+非标准招聘页面可启用聊天模型抽取：
+
+```powershell
+$env:JOB_RAG_ENABLE_LLM_EXTRACTION="1"
+$env:JOB_RAG_LLM_BASE_URL="<set locally>"
+$env:JOB_RAG_LLM_MODEL="<set locally>"
+$env:JOB_RAG_LLM_API_KEY="<set locally>"
+```
+
+该能力只在规则抽取无效或低置信度时调用，输出 JSON 后仍走现有校验与归一化流程。
 
 ---
 
@@ -394,6 +415,7 @@ job_rag/api/routes.py
 | 与第 6 部分后端 API 对齐 | 需要确认 `/crawl_jobs`、`/recommend_jobs` 最终字段 | 高 |
 | 真实简历画像评测 | 需要用脱敏简历 profile 验证推荐是否合理 | 中 |
 | 抽取规则增强 | 根据真实网页格式补充中文招聘页面规则 | 中 |
+| 真实 LLM 抽取验证 | 需要使用本地配置的聊天模型验证 V2EX 等非标准招聘帖 | 中 |
 | PR / 合并流程 | 当前只 push 到个人分支，尚未创建 PR，尚未合并 main | 低 |
 
 ---
@@ -413,4 +435,3 @@ job_rag/api/routes.py
 ```
 
 目前主要进入真实集成验证阶段。基础代码结构、离线 demo、本地 Chroma 后端和 OpenAI-compatible embedding 接口已经具备。
-

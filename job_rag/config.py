@@ -28,6 +28,16 @@ EMBEDDING_API_ALLOW_FALLBACK = os.getenv("JOB_RAG_EMBEDDING_ALLOW_FALLBACK", "1"
     "yes",
     "on",
 }
+LLM_EXTRACTION_ENABLED = os.getenv("JOB_RAG_ENABLE_LLM_EXTRACTION", "0").lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
+LLM_API_BASE_URL = os.getenv("JOB_RAG_LLM_BASE_URL")
+LLM_API_MODEL = os.getenv("JOB_RAG_LLM_MODEL")
+LLM_API_KEY = os.getenv("JOB_RAG_LLM_API_KEY")
+LLM_API_TIMEOUT_SECONDS = int(os.getenv("JOB_RAG_LLM_TIMEOUT_SECONDS", "45"))
 
 BROWSER_USE_ENABLED = os.getenv("JOB_RAG_ENABLE_BROWSER_USE", "0").lower() in {"1", "true", "yes", "on"}
 BROWSER_USE_HEADLESS = os.getenv("JOB_RAG_BROWSER_USE_HEADLESS", "1").lower() not in {"0", "false", "no", "off"}

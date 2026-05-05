@@ -102,3 +102,20 @@ JOB_RAG_EMBEDDING_BASE_URL=<set locally>
 JOB_RAG_EMBEDDING_MODEL=<set locally>
 JOB_RAG_EMBEDDING_API_KEY=<set locally>
 ```
+
+## Optional LLM Extraction
+
+The rule-based extractor remains the default so the demo works offline. For
+non-standard recruiting pages such as forum posts, enable the optional
+OpenAI-compatible chat extractor as a low-confidence fallback:
+
+```text
+JOB_RAG_ENABLE_LLM_EXTRACTION=1
+JOB_RAG_LLM_BASE_URL=<set locally>
+JOB_RAG_LLM_MODEL=<set locally>
+JOB_RAG_LLM_API_KEY=<set locally>
+```
+
+The LLM extractor is only called when the rule-based extraction is invalid or
+low confidence. Extracted fields still pass through the same validation and
+normalization layer.
