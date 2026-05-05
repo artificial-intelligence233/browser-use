@@ -6,6 +6,8 @@ import re
 from typing import Any
 
 from job_rag.extraction.normalizer import normalize_skills
+from job_rag.indexing.embedder import cosine_similarity, get_embedding_provider
+from job_rag.indexing.interfaces import EmbeddingProvider
 from job_rag.matching.reason_generator import (
     generate_match_reasons,
     generate_mismatch_reasons,
@@ -14,34 +16,65 @@ from job_rag.matching.reason_generator import (
 from job_rag.schemas import JobMatchResult, JobPosting
 
 
-def compute_skill_match(resume_skills: list[str], job_skills: list[str]) -> dict[str, Any]:
+def _clip_similarity(score: float) -> float:
+    return round(max(0.0, min(float(score), 1.0)), 4)
+
+
+def _text_similarity(
+    left_text: str,
+    right_text: str,
+    embedding_provider: EmbeddingProvider | None = None,
+) -> float:
+    """Embed two text blocks and return their cosine similarity."""
+    left = re.sub(r"\s+", " ", left_text or "").strip()
+    right = re.sub(r"\s+", " ", right_text or "").strip()
+    if not left or not right:
+        return 0.0
+    provider = embedding_provider or get_embedding_provider()
+    left_embedding, right_embedding = provider.embed_documents([left, right])
+    return _clip_similarity(cosine_similarity(left_embedding, right_embedding))
+
+
+def compute_skill_match(
+    resume_skills: list[str],
+    job_skills: list[str],
+    embedding_provider: EmbeddingProvider | None = None,
+) -> dict[str, Any]:
     resume_norm = normalize_skills(resume_skills)
     job_norm = normalize_skills(job_skills)
     resume_keys = {skill.lower(): skill for skill in resume_norm}
     matched = [skill for skill in job_norm if skill.lower() in resume_keys]
     missing = [skill for skill in job_norm if skill.lower() not in resume_keys]
     ratio = len(matched) / len(job_norm) if job_norm else 0.0
+    vector_score = _text_similarity(" ".join(resume_norm), " ".join(job_norm), embedding_provider)
     return {
         "matched_skills": matched,
         "missing_skills": missing,
-        "skill_match": round(ratio, 4),
+        "skill_match": vector_score,
         "skill_match_ratio": round(ratio, 4),
+        "skill_match_method": "embedding_cosine",
     }
 
 
-def _role_match(resume_profile: dict[str, Any], job: JobPosting) -> float:
-    if not job.title:
+def _role_match(
+    resume_profile: dict[str, Any],
+    job: JobPosting,
+    embedding_provider: EmbeddingProvider | None = None,
+) -> float:
+    target_roles = " ".join(resume_profile.get("target_roles") or [])
+    if not target_roles:
         return 0.0
-    title = job.title.lower()
-    for role in resume_profile.get("target_roles") or []:
-        role_lower = role.lower()
-        if role_lower in title or title in role_lower:
-            return 1.0
-        role_tokens = {token for token in role_lower.split() if len(token) > 2}
-        title_tokens = {token for token in title.split() if len(token) > 2}
-        if role_tokens and title_tokens and role_tokens & title_tokens:
-            return 0.5
-    return 0.0
+    job_role_text = " ".join(
+        part
+        for part in [
+            job.title,
+            job.job_type,
+            " ".join(job.responsibilities),
+            " ".join(job.requirements),
+        ]
+        if part
+    )
+    return _text_similarity(target_roles, job_role_text, embedding_provider)
 
 
 def _city_match(resume_profile: dict[str, Any], job: JobPosting) -> float:
@@ -53,10 +86,6 @@ def _city_match(resume_profile: dict[str, Any], job: JobPosting) -> float:
 
 def _norm_text(value: str | None) -> str:
     return (value or "").lower()
-
-
-def _tokenize_text(value: str | None) -> set[str]:
-    return {token.lower() for token in re.findall(r"[\w\-\+\.#]+", value or "") if len(token) >= 2}
 
 
 def _job_comparison_text(job: JobPosting) -> str:
@@ -75,10 +104,12 @@ def _job_comparison_text(job: JobPosting) -> str:
     return " ".join(part for part in parts if part)
 
 
-def _project_relevance(resume_profile: dict[str, Any], job: JobPosting) -> tuple[float, list[str]]:
+def _project_relevance(
+    resume_profile: dict[str, Any],
+    job: JobPosting,
+    embedding_provider: EmbeddingProvider | None = None,
+) -> tuple[float, list[str]]:
     job_text = _job_comparison_text(job)
-    job_lower = job_text.lower()
-    job_tokens = _tokenize_text(job_text)
     relevant_projects: list[str] = []
     best_score = 0.0
 
@@ -90,13 +121,7 @@ def _project_relevance(resume_profile: dict[str, Any], job: JobPosting) -> tuple
         if not project_terms:
             continue
 
-        tech_matches = [term for term in tech_stack if term.lower() in job_lower]
-        project_tokens = set()
-        for term in project_terms:
-            project_tokens.update(_tokenize_text(term))
-        token_overlap = len(project_tokens & job_tokens) / len(project_tokens) if project_tokens else 0.0
-
-        score = min(1.0, 0.2 * len(tech_matches) + 0.8 * token_overlap)
+        score = _text_similarity(" ".join(project_terms), job_text, embedding_provider)
         if score >= 0.2 and name:
             relevant_projects.append(name)
         best_score = max(best_score, score)
@@ -170,11 +195,12 @@ def score_job_match(
     retrieval_score: float,
     rank: int = 0,
 ) -> JobMatchResult:
-    skill_detail = compute_skill_match(resume_profile.get("skills") or [], job.skills)
-    role_score = _role_match(resume_profile, job)
+    embedding_provider = get_embedding_provider()
+    skill_detail = compute_skill_match(resume_profile.get("skills") or [], job.skills, embedding_provider)
+    role_score = _role_match(resume_profile, job, embedding_provider)
     city_score = _city_match(resume_profile, job)
     semantic_similarity = round(min(max(retrieval_score, 0.0), 1.0), 4)
-    project_relevance, relevant_projects = _project_relevance(resume_profile, job)
+    project_relevance, relevant_projects = _project_relevance(resume_profile, job, embedding_provider)
     education_or_experience_match = _education_or_experience_match(resume_profile, job)
     job_type_or_salary_match = _job_type_or_salary_match(resume_profile, job)
     score_detail = {
@@ -190,7 +216,8 @@ def score_job_match(
         "retrieval_score": retrieval_score,
     }
     weighted_score = (
-        0.35 * semantic_similarity
+        0.25 * semantic_similarity
+        + 0.10 * role_score
         + 0.25 * skill_detail["skill_match"]
         + 0.20 * project_relevance
         + 0.10 * city_score

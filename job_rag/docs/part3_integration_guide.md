@@ -706,7 +706,8 @@ def run_job_rag_pipeline(payload: dict) -> dict:
 
 ```text
 final_score =
-0.35 * semantic_similarity
+0.25 * semantic_similarity
++ 0.10 * role_score
 + 0.25 * skill_match
 + 0.20 * project_relevance
 + 0.10 * city_match
@@ -718,9 +719,10 @@ final_score =
 
 | 字段 | 含义 |
 | --- | --- |
-| `semantic_similarity` | 简历 query 与岗位文本的检索相似度。 |
-| `skill_match` | 简历技能与岗位技能要求重合度。 |
-| `project_relevance` | 简历项目描述和岗位要求的相关性。 |
+| `semantic_similarity` | 简历 query 与岗位文本 embedding 后的向量检索相似度。 |
+| `role_score` | 目标岗位方向与岗位标题/职责/要求 embedding 后的余弦相似度。 |
+| `skill_match` | 简历技能文本与岗位技能文本 embedding 后的余弦相似度；同时保留精确命中的 `matched_skills` 和 `missing_skills` 供解释使用。 |
+| `project_relevance` | 简历项目描述/技术栈与岗位职责/要求 embedding 后的余弦相似度。 |
 | `city_match` | 目标城市与岗位城市是否匹配。 |
 | `education_or_experience_match` | 学历或经验要求是否大致匹配。 |
 | `job_type_or_salary_match` | 岗位类型或薪资期望是否有基本匹配。 |

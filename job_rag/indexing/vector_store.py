@@ -53,11 +53,7 @@ def _passes_filters(metadata: dict[str, Any], filters: dict[str, Any] | None) ->
 
 
 def _score_embedding(query_embedding: Embedding, document_embedding: Embedding) -> float:
-    if isinstance(query_embedding, dict) and isinstance(document_embedding, dict):
-        return cosine_similarity(query_embedding, document_embedding)
-    # Dense-vector providers will plug in here later; keep a deterministic
-    # no-match score instead of guessing incompatible vector formats.
-    return 0.0
+    return cosine_similarity(query_embedding, document_embedding)
 
 
 def _embedding_to_dense_vector(embedding: Embedding, dimensions: int = CHROMA_HASH_DIMENSIONS) -> list[float]:

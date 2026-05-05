@@ -9,6 +9,8 @@ class MatcherTest(unittest.TestCase):
         result = compute_skill_match(["Python", "RAG"], ["Python", "RAG", "Docker"])
         self.assertEqual(result["matched_skills"], ["Python", "RAG"])
         self.assertEqual(result["missing_skills"], ["Docker"])
+        self.assertEqual(result["skill_match_method"], "embedding_cosine")
+        self.assertGreater(result["skill_match"], 0)
 
     def test_score_job_match_range_and_reasons(self) -> None:
         resume = {
@@ -40,6 +42,7 @@ class MatcherTest(unittest.TestCase):
         self.assertTrue(result.mismatch_reasons)
         self.assertIn("score_detail", result.to_dict())
         self.assertIn("semantic_similarity", result.score_detail)
+        self.assertIn("role_score", result.score_detail)
         self.assertIn("project_relevance", result.score_detail)
         self.assertIn("city_match", result.score_detail)
         self.assertIn("education_or_experience_match", result.score_detail)

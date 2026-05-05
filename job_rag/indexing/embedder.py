@@ -56,8 +56,21 @@ def embed_text(text: str) -> dict[str, float]:
     return {token: value / norm for token, value in counts.items()}
 
 
-def cosine_similarity(left: dict[str, float], right: dict[str, float]) -> float:
+def cosine_similarity(left: Embedding, right: Embedding) -> float:
+    """Return cosine similarity for sparse dict or dense list embeddings."""
     if not left or not right:
+        return 0.0
+    if isinstance(left, list) and isinstance(right, list):
+        length = min(len(left), len(right))
+        if length == 0:
+            return 0.0
+        dot_product = sum(float(left[index]) * float(right[index]) for index in range(length))
+        left_norm = math.sqrt(sum(float(value) * float(value) for value in left))
+        right_norm = math.sqrt(sum(float(value) * float(value) for value in right))
+        if not left_norm or not right_norm:
+            return 0.0
+        return round(float(dot_product / (left_norm * right_norm)), 4)
+    if not isinstance(left, dict) or not isinstance(right, dict):
         return 0.0
     if len(left) > len(right):
         left, right = right, left
